@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0A0A0C;
+  --surface: #0E1013;
+  --surface-raised: #14171C;
+  --border: #1E2228;
+  --border-light: #2A303A;
+  --accent: #FF6E26;
+  --accent-hover: #FF853E;
+  --accent-glow: rgba(255, 110, 38, 0.15);
+  --text-primary: #ECEFF4;
+  --text-secondary: #8B949E;
+  --text-muted: #525A66;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: #0A0A0C;
+  color: #ECEFF4;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography styles */
+.font-pixel {
+  font-family: 'Silkscreen', monospace;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Terminal ASCII & Dotted Backgrounds */
+.bg-terminal {
+  background-color: #0A0A0C;
+}
+
+.bg-dot-matrix {
+  background-image: radial-gradient(circle, rgba(236, 239, 244, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.bg-dot-matrix-dense {
+  background-image: radial-gradient(circle, rgba(255, 110, 38, 0.12) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Subtle CRT Scanline effect (clean, not blurry) */
+.scanline-subtle {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.18) 50%
+  );
+  background-size: 100% 3px;
+}
+
+/* Claude Code Terminal Card & Panel */
+.terminal-panel {
+  background: #0E1013;
+  border: 1px dashed #1E2228;
+  border-radius: 4px;
+}
+
+.terminal-panel-solid {
+  background: #0E1013;
+  border: 1px solid #1E2228;
+  border-radius: 4px;
+}
+
+/* Active Nav Button */
+.btn-terminal-active {
+  background: rgba(255, 110, 38, 0.08);
+  border: 1px solid #FF6E26;
+  color: #ECEFF4;
+  box-shadow: 0 0 10px rgba(255, 110, 38, 0.15);
+}
+
+/* Tactile Terminal Key Button */
+.btn-terminal {
+  border: 1px solid #2A303A;
+  background: #111418;
+  color: #ECEFF4;
+  transition: all 0.12s ease;
+}
+
+.btn-terminal:hover {
+  border-color: #FF6E26;
+  background: #161A20;
+  color: #FFFFFF;
+}
+
+.btn-terminal-accent {
+  background: #FF6E26;
+  border: 1px solid #FF853E;
+  color: #0A0A0C;
+  font-weight: 700;
+  transition: all 0.12s ease;
+}
+
+.btn-terminal-accent:hover {
+  background: #FF853E;
+  box-shadow: 0 0 12px rgba(255, 110, 38, 0.35);
+}
+
+/* Segmented Progress Block */
+.progress-block-filled {
+  background: #FF6E26;
+}
+
+.progress-block-empty {
+  border: 1px solid #2A303A;
+  background: #111418;
+}
+
+/* Minimal Terminal Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0C;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2228;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF6E26;
+}
+
+/* Text selections */
+::selection {
+  background: #FF6E26;
+  color: #0A0A0C;
+}
+
+/* ============================================================
+   BUTTERY SMOOTH RETRO-ASCII & CRT ANIMATIONS (60FPS / GPU)
+   ============================================================ */
+
+/* 1. Dotted Rainbow Arch Flowing Beam */
+@keyframes ascii-dash-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -32px;
+  }
+}
+
+.animate-ascii-flow {
+  animation: ascii-dash-flow 12s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+.animate-ascii-flow-reverse {
+  animation: ascii-dash-flow 16s linear infinite reverse;
+  will-change: stroke-dashoffset;
+}
+
+/* 2. Gentle Organic Twinkle for Celestial ASCII Stars */
+@keyframes ascii-twinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.1);
+  }
+}
+
+.animate-twinkle-1 {
+  animation: ascii-twinkle 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+.animate-twinkle-2 {
+  animation: ascii-twinkle 4.4s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.1s;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+.animate-twinkle-3 {
+  animation: ascii-twinkle 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.7s;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+/* 3. Scales of Justice Gentle Harmonic Balance Rocking */
+@keyframes scales-balance {
+  0%, 100% {
+    transform: rotate(-1.4deg);
+  }
+  50% {
+    transform: rotate(1.4deg);
+  }
+}
+
+.animate-scales-balance {
+  animation: scales-balance 6.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: transform;
+}
+
+/* 4. Buttery Soft Cursor Blink */
+@keyframes cursor-smooth {
+  0%, 48% {
+    opacity: 1;
+  }
+  50%, 98% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-cursor-smooth {
+  animation: cursor-smooth 1.05s steps(1) infinite;
+}
+
+/* 5. Live Radar Pulsing Aura */
+@keyframes live-radar {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 110, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(255, 110, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 110, 38, 0);
+  }
+}
+
+.animate-radar {
+  animation: live-radar 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* 6. Warm Shimmer Glow for Active Progress Bar */
+@keyframes progress-shimmer {
+  0%, 100% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 2px rgba(255, 110, 38, 0.4));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(255, 110, 38, 0.8));
+  }
+}
+
+.animate-progress-pulse {
+  animation: progress-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}

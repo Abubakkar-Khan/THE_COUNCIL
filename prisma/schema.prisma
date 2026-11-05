@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Persona {
+  id                 String   @id @default(cuid())
+  name               String
+  description        String
+  personality        String
+  perspective        String
+  beliefs            String
+  strengths          String
+  blindSpots         String
+  communicationStyle String
+  debateStyle        String
+  customInstructions String   @default("")
+  isEnabled          Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  debates       DebatePersona[]
+  contributions Contribution[]
+}
+
+model Debate {
+  id           String    @id @default(cuid())
+  userQuestion String
+  status       String    @default("pending") // pending, in_progress, completed, failed
+  model        String    @default("")
+  totalRounds  Int       @default(3)
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+
+  personas      DebatePersona[]
+  contributions Contribution[]
+  verdict       Verdict?
+}
+
+model DebatePersona {
+  debateId  String
+  personaId String
+  debate    Debate  @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  persona   Persona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@id([debateId, personaId])
+}
+
+model Contribution {
+  id          String   @id @default(cuid())
+  debateId    String
+  personaId   String
+  roundNumber Int
+  role        String   @default("persona") // persona, judge
+  content     String
+  createdAt   DateTime @default(now())
+
+  debate  Debate  @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  persona Persona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+}
+
+model Verdict {
+  id                      String   @id @default(cuid())
+  debateId                String   @unique
+  summary                 String
+  recommendation          String
+  supportingArguments     String
+  opposingArguments       String
+  risks                   String
+  agreements              String
+  unresolvedDisagreements String
+  nextSteps               String
+  createdAt               DateTime @default(now())
+
+  debate Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+}
