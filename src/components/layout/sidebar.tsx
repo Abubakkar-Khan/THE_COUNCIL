@@ -7,6 +7,7 @@ import {
   MessageSquare,
   BookOpen,
   History,
+  Radio,
 } from "lucide-react";
 
 // Cute Cat Head SVG Icon matching the retro terminal blob aesthetic
@@ -52,18 +53,24 @@ const navigation = [
   },
   {
     idx: "02",
+    name: "1v1 Chat",
+    href: "/chat",
+    icon: Radio,
+  },
+  {
+    idx: "03",
     name: "Agents",
     href: "/personas",
     icon: CatHeadIcon,
   },
   {
-    idx: "03",
+    idx: "04",
     name: "Library",
     href: "/",
     icon: BookOpen,
   },
   {
-    idx: "04",
+    idx: "05",
     name: "History",
     href: "/debates",
     icon: History,
