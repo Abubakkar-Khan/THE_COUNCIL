@@ -187,10 +187,11 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
           </h1>
         </div>
 
-        {/* The Council Table ASCII / Dithered Illustration */}
-        <div className="w-full mb-6 relative">
+        {/* The Tournament Arena & Live Proposal Elimination Matrix */}
+        <div className="w-full mb-4 relative">
           <CouncilTableArt
             personas={debate.personas || []}
+            contributions={debate.contributions || []}
             activeSpeakerName={activeSpeakerName}
             isLive={debate.status === "in_progress"}
           />

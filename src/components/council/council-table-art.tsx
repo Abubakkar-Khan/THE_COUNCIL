@@ -1,328 +1,256 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useMemo } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { BlobAvatar } from "./blob-avatar";
-import type { Persona } from "@/types";
+import { Trophy, Target, XCircle, ShieldCheck, Zap } from "lucide-react";
+import type { Persona, Contribution } from "@/types";
 
 interface CouncilTableArtProps {
   personas: { persona: Persona }[];
+  contributions?: Contribution[];
   activeSpeakerName?: string;
   isLive?: boolean;
 }
 
-// ── Procedural ASCII line generators ─────────────────────────────────────────
-
-function generateCircuitRow(width: number, seed: number): string {
-  const segments = [
-    "───", "━━━", "┄┄┄", "╌╌╌", "─┬─", "─┴─", "─┼─",
-    "◇──", "──◇", "─○─", "─●─", "──┤", "├──", "─╴",
-    "╶──", "─◆─", "◈──", "──◈",
-  ];
-  let line = "";
-  let i = seed;
-  while (line.length < width) {
-    const seg = segments[i % segments.length];
-    line += seg;
-    i = (i * 31 + 7) % 97;
-  }
-  return line.slice(0, width);
-}
-
-function generateDataStream(width: number, seed: number): string {
-  const glyphs = "01·.:░▒▓█│┃╎╏┊┋∴∵⋮⋯≡≈~";
-  let line = "";
-  let i = seed;
-  while (line.length < width) {
-    line += glyphs[i % glyphs.length];
-    i = (i * 37 + 13) % 53;
-  }
-  return line.slice(0, width);
+interface ParsedProposal {
+  id: string;
+  title: string;
+  authorName: string;
+  authorPersona?: Persona;
+  content: string;
+  scoreAvg: number;
+  scoresCount: number;
+  isEliminated: boolean;
+  critique?: string;
 }
 
 export function CouncilTableArt({
   personas = [],
+  contributions = [],
   activeSpeakerName,
   isLive = false,
 }: CouncilTableArtProps) {
-  const displayPersonas = personas.slice(0, 7);
-  const agentCount = displayPersonas.length;
+  const displayPersonas = personas.slice(0, 6);
 
-  // Generate procedural circuit lines for the background
-  const circuit1 = generateCircuitRow(80, 3);
-  const circuit2 = generateCircuitRow(80, 17);
-  const stream1 = generateDataStream(60, 7);
-  const stream2 = generateDataStream(60, 23);
+  // Parse proposals from Round 1 contributions
+  const proposals = useMemo(() => {
+    const list: ParsedProposal[] = [];
+    const r1 = contributions.filter((c) => c.roundNumber === 1 && c.role === "persona");
+    const r2 = contributions.filter((c) => c.roundNumber === 2 && c.role === "persona");
+
+    r1.forEach((c) => {
+      const match = c.content.match(/\[PROPOSAL:\s*["']?([^"'\]]+)["']?\]/i);
+      const title = match ? match[1].trim() : `${c.persona?.name?.split(" ")[0] || "Agent"}'s Strategy`;
+      const cleanBody = c.content.replace(/\[PROPOSAL:[^\]]+\]/i, "").trim();
+
+      // Find peer review scores from round 2 referencing this persona
+      const reviews = r2.filter(
+        (rev) =>
+          c.persona?.name &&
+          rev.content.toLowerCase().includes(c.persona.name.toLowerCase().split(" ")[0])
+      );
+
+      let totalScore = 0;
+      let scoresCount = 0;
+      let worstCritique: string | undefined;
+
+      reviews.forEach((rev) => {
+        const scoreMatch = rev.content.match(/\[SCORE:\s*(\d+(?:\.\d+)?)\s*(?:\/\s*10)?\]/i);
+        if (scoreMatch) {
+          const val = parseFloat(scoreMatch[1]);
+          totalScore += val;
+          scoresCount++;
+          if (val < 6) {
+            worstCritique = rev.content.replace(/@\w+\s*\[SCORE:[^\]]+\]:?/i, "").trim();
+          }
+        }
+      });
+
+      const avg = scoresCount > 0 ? totalScore / scoresCount : 7.5;
+      const isEliminated = scoresCount > 0 && avg < 5.5;
+
+      list.push({
+        id: c.id,
+        title,
+        authorName: c.persona?.name || "Council Member",
+        authorPersona: c.persona || undefined,
+        content: cleanBody || c.content,
+        scoreAvg: parseFloat(avg.toFixed(1)),
+        scoresCount,
+        isEliminated,
+        critique: worstCritique,
+      });
+    });
+
+    return list;
+  }, [contributions]);
 
   return (
-    <div className="relative w-full overflow-hidden select-none my-2">
-      {/* ═══════════════════════════════════════════════════════════
-          BACKGROUND: Full ASCII Terminal Chamber Scene
-          ═══════════════════════════════════════════════════════════ */}
-      <div className="relative border border-[#1E2228] bg-[#0A0A0C] overflow-hidden">
-        {/* Top Header Bar — Terminal Window Chrome */}
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1E2228] bg-[#0E1013]">
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] text-[#FF6E26] font-mono font-bold">
-              ◆ COUNCIL_CHAMBER
+    <div className="w-full border border-[#1E2228] bg-[#0A0A0C] font-mono-code select-none overflow-hidden my-3">
+      {/* ── Top Bar: Arena Telemetry ────────────────────────────── */}
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#1E2228] bg-[#0E1013]">
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] bg-[#FF6E26] text-[#0A0A0C] font-bold px-1.5 py-0.2">
+            TOURNAMENT_ARENA
+          </span>
+          <span className="text-[10px] text-[#525A66] hidden sm:inline">
+            // ELIMINATION_MATRIX
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-[10px]">
+          {isLive && (
+            <span className="flex items-center gap-1.5 px-2 py-0.5 border border-[#FF6E26]/40 bg-[#FF6E26]/10 text-[#FF6E26] font-bold">
+              <span className="h-1.5 w-1.5 bg-[#FF6E26] animate-radar" />
+              PEER_AUDIT_ACTIVE
             </span>
-            <span className="text-[9px] text-[#525A66] font-mono">
-              v2.0 // {agentCount} AGENTS SEATED
+          )}
+          <span className="text-[#8B949E]">
+            PROPOSALS: <span className="text-[#ECEFF4] font-bold">{proposals.length}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* ── Main Arena: Podiums & Live Proposal Board ────────────── */}
+      <div className="p-3 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        {/* Left/Center Column: The Deliberation Podiums (7 Cols) */}
+        <div className="lg:col-span-7 flex flex-col justify-between border border-[#1E2228] bg-[#0E1013] p-3 relative overflow-hidden min-h-[175px]">
+          {/* Subtle radar scanline grid */}
+          <div className="absolute inset-0 bg-dot-matrix pointer-events-none opacity-40" />
+
+          <div className="flex items-center justify-between relative z-10 mb-2">
+            <span className="text-[9px] text-[#525A66] font-mono flex items-center gap-1">
+              <Target className="h-3 w-3 text-[#FF6E26]" />
+              COUNCIL PODIUMS (ACTIVE MINDS)
             </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            {isLive && (
-              <span className="flex items-center gap-1 text-[9px] text-[#FF6E26] font-mono">
-                <span className="h-1.5 w-1.5 bg-[#FF6E26] animate-radar" />
-                LIVE
+            {activeSpeakerName && (
+              <span className="text-[9px] text-[#FF6E26] font-mono animate-pulse">
+                ► {activeSpeakerName.toUpperCase()} SPEAKING
               </span>
             )}
-            <span className="text-[9px] text-[#525A66] font-mono">
-              [PID:0x{Math.abs(agentCount * 7919).toString(16).toUpperCase().slice(0, 4)}]
-            </span>
+          </div>
+
+          {/* Podiums Row with Spotlights */}
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 relative z-10 my-auto py-2">
+            {displayPersonas.map((item) => {
+              const persona = item.persona;
+              if (!persona) return null;
+              const isSpeaking = activeSpeakerName === persona.name;
+
+              return (
+                <div
+                  key={persona.id}
+                  className={`flex flex-col items-center justify-end p-2 border transition-all ${
+                    isSpeaking
+                      ? "border-[#FF6E26] bg-[#FF6E26]/10 shadow-[0_0_12px_rgba(255,110,38,0.25)]"
+                      : "border-[#1E2228] bg-[#0A0A0C]/80 opacity-80"
+                  }`}
+                >
+                  {/* Status Indicator */}
+                  <div className="text-[8px] font-mono mb-1">
+                    {isSpeaking ? (
+                      <span className="text-[#FF6E26] font-bold animate-pulse">[PITCHING]</span>
+                    ) : (
+                      <span className="text-[#525A66]">[SEATED]</span>
+                    )}
+                  </div>
+
+                  {/* Bit-Cat Avatar */}
+                  <BlobAvatar
+                    name={persona.name}
+                    persona={persona}
+                    size="sm"
+                    isSpeaking={isSpeaking}
+                    className="mb-1"
+                  />
+
+                  {/* Character Name */}
+                  <span
+                    className={`text-[9px] font-mono truncate max-w-[65px] text-center ${
+                      isSpeaking ? "text-[#ECEFF4] font-bold" : "text-[#8B949E]"
+                    }`}
+                  >
+                    {persona.name.split(" ")[0]}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bottom Stage Footnote */}
+          <div className="flex items-center justify-between text-[8px] text-[#525A66] pt-2 border-t border-[#1E2228] relative z-10">
+            <span>RULE: NO DIPLOMACY</span>
+            <span>CRITERIA: SPEED // ASYMMETRY // LOW-RISK</span>
           </div>
         </div>
 
-        {/* ── Ambient Background Layer: Circuit traces + data streams ─── */}
-        <div className="relative">
-          {/* Flowing circuit traces (top) */}
-          <div className="overflow-hidden">
-            <motion.div
-              animate={{ x: [0, -120] }}
-              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
-              className="text-[8px] text-[#1E2228] font-mono whitespace-nowrap py-0.5 px-2 select-none"
-            >
-              {circuit1}{circuit1}
-            </motion.div>
+        {/* Right Column: Live Proposal & Elimination Board (5 Cols) */}
+        <div className="lg:col-span-5 border border-[#1E2228] bg-[#0E1013] p-3 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-[#1E2228] pb-1.5 mb-2">
+            <span className="text-[10px] text-[#ECEFF4] font-bold flex items-center gap-1.5">
+              <Trophy className="h-3 w-3 text-[#FF6E26]" />
+              PROPOSAL STANDINGS
+            </span>
+            <span className="text-[9px] text-[#525A66]">
+              {proposals.length > 0 ? "ROUND 1+2" : "WAITING FOR PITCHES"}
+            </span>
           </div>
 
-          {/* ── Main Council Visualization Area ─────────────────────── */}
-          <div className="relative h-[200px] md:h-[240px] flex items-center justify-center">
-
-            {/* Center ASCII Art: The Council Sigil */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.07]">
-              <pre className="font-mono text-[#ECEFF4] text-[8px] md:text-[10px] leading-tight text-center select-none">
-{`          ┌─────────────────────────────┐
-          │  ╔═══════════════════════╗  │
-          │  ║   T H E   C O U N C I L  ║  │
-          │  ╚═══════════════════════╝  │
-          │         ◆─────◆             │
-          │        ╱ ╲   ╱ ╲            │
-          │       ╱   ╲ ╱   ╲           │
-          │      ◆─────◆─────◆          │
-          │       ╲   ╱ ╲   ╱           │
-          │        ╲ ╱   ╲ ╱            │
-          │         ◆─────◆             │
-          │      ┌──┴─────┴──┐          │
-          │      │ DELIBERATE │          │
-          │      └────────────┘          │
-          └─────────────────────────────┘`}
-              </pre>
-            </div>
-
-            {/* Center Council Table (SVG) */}
-            <svg
-              viewBox="0 0 600 200"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] h-[120px] pointer-events-none"
-              shapeRendering="crispEdges"
-            >
-              {/* Table Surface: Hexagonal Slab */}
-              <polygon
-                points="140,65 460,65 490,85 460,105 140,105 110,85"
-                fill="#0E1013"
-                stroke="#2A303A"
-                strokeWidth="1"
-              />
-              <polygon
-                points="150,70 450,70 475,85 450,100 150,100 125,85"
-                fill="none"
-                stroke="#1E2228"
-                strokeWidth="0.5"
-                strokeDasharray="4 3"
-              />
-
-              {/* Orange glow under center */}
-              <ellipse
-                cx="300"
-                cy="85"
-                rx="60"
-                ry="12"
-                fill="#FF6E26"
-                fillOpacity="0.06"
-                className="animate-pulse"
-              />
-
-              {/* Scales of Justice: Center Emblem */}
-              <g transform="translate(300, 78) scale(0.85)">
-                {/* Pillar */}
-                <rect x="-1" y="-18" width="2" height="26" fill="#FF6E26" opacity="0.8" />
-                {/* Base */}
-                <rect x="-10" y="8" width="20" height="2" fill="#FF6E26" opacity="0.8" />
-                {/* Top ring */}
-                <rect x="-2" y="-20" width="4" height="2" fill="#FF6E26" opacity="0.6" />
-
-                {/* Rocking beam + pans */}
-                <g className="animate-scales-balance origin-[0px_-18px]">
-                  {/* Beam */}
-                  <rect x="-22" y="-18" width="44" height="2" fill="#FF6E26" opacity="0.8" />
-
-                  {/* Left pan chain + pan */}
-                  <rect x="-22" y="-16" width="1" height="8" fill="#FF6E26" opacity="0.5" />
-                  <rect x="-28" y="-8" width="14" height="2" fill="#FF6E26" opacity="0.4" />
-                  <rect x="-26" y="-6" width="10" height="1" fill="#FF6E26" opacity="0.2" />
-
-                  {/* Right pan chain + pan */}
-                  <rect x="21" y="-16" width="1" height="8" fill="#FF6E26" opacity="0.5" />
-                  <rect x="14" y="-8" width="14" height="2" fill="#FF6E26" opacity="0.4" />
-                  <rect x="16" y="-6" width="10" height="1" fill="#FF6E26" opacity="0.2" />
-                </g>
-              </g>
-
-              {/* Decorative circuit traces on table surface */}
-              <line x1="160" y1="85" x2="260" y2="85" stroke="#2A303A" strokeWidth="0.5" strokeDasharray="2 4" />
-              <line x1="340" y1="85" x2="440" y2="85" stroke="#2A303A" strokeWidth="0.5" strokeDasharray="2 4" />
-              <rect x="260" y="83" width="4" height="4" fill="#FF6E26" fillOpacity="0.15" />
-              <rect x="336" y="83" width="4" height="4" fill="#FF6E26" fillOpacity="0.15" />
-            </svg>
-
-            {/* ── Agent Bit Cats seated around the table ─────────────── */}
-            <div className="absolute inset-0">
-              <div className="relative w-full h-full max-w-[620px] mx-auto">
-                {displayPersonas.map((item, index) => {
-                  const persona = item.persona;
-                  if (!persona) return null;
-
-                  const total = displayPersonas.length;
-                  const step = total > 1 ? index / (total - 1) : 0.5;
-
-                  // Arc positions: spread from 12% to 88% width
-                  const leftPercent = total === 1 ? 50 : 12 + step * 76;
-                  // Vertical arc: center agents sit higher, sides lower
-                  const arcHeight = Math.sin(step * Math.PI) * 18;
-                  const topPx = total === 1 ? 50 : 70 - arcHeight;
-
-                  const isSpeaking = activeSpeakerName === persona.name;
-
-                  return (
-                    <motion.div
-                      key={persona.id || index}
-                      className="absolute -translate-x-1/2 flex flex-col items-center select-none"
-                      style={{
-                        left: `${leftPercent}%`,
-                        top: `${topPx}px`,
-                      }}
-                      animate={{
-                        y: isSpeaking ? [0, -6, 0] : [0, -2.5, 0],
-                      }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: isSpeaking ? 1.6 : 3.4 + index * 0.4,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      {/* Speech indicator chip */}
-                      <motion.div
-                        animate={{
-                          opacity: isSpeaking ? 1 : 0.55,
-                          scale: isSpeaking ? [1, 1.06, 1] : 1,
-                          y: isSpeaking ? [-1, -4, -1] : 0,
-                        }}
-                        transition={{
-                          repeat: isSpeaking ? Infinity : 0,
-                          duration: 1.6,
-                          ease: "easeInOut",
-                        }}
-                        className="mb-1"
-                      >
-                        <div
-                          className={`px-1.5 py-0.5 border text-[8px] font-mono flex items-center justify-center transition-colors duration-300 ${
-                            isSpeaking
-                              ? "border-[#FF6E26] bg-[#FF6E26]/10 text-[#FF6E26] shadow-[0_0_10px_rgba(255,110,38,0.3)]"
-                              : "border-[#1E2228] bg-[#0A0A0C] text-[#525A66]"
-                          }`}
-                        >
-                          {isSpeaking ? (
-                            <span className="flex items-center gap-0.5 px-0.5">
-                              <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:0ms]" />
-                              <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:150ms]" />
-                              <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:300ms]" />
-                            </span>
-                          ) : (
-                            <span>···</span>
-                          )}
-                        </div>
-                      </motion.div>
-
-                      {/* The Bit Cat */}
-                      <BlobAvatar
-                        name={persona.name}
-                        persona={persona}
-                        size="md"
-                        isSpeaking={isSpeaking}
-                        isTyping={isSpeaking && isLive}
-                      />
-
-                      {/* Name Tag */}
-                      <span
-                        className={`mt-1 font-mono text-[8px] tracking-tight truncate max-w-[65px] text-center transition-colors duration-300 ${
-                          isSpeaking ? "text-[#FF6E26] font-bold" : "text-[#525A66]"
-                        }`}
-                      >
-                        {persona.name.split(" ")[0]}
-                      </span>
-                    </motion.div>
-                  );
-                })}
+          {/* Proposals List */}
+          <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+            {proposals.length === 0 ? (
+              <div className="py-6 text-center text-[10px] text-[#525A66] font-mono">
+                [ Deliberation starting... personas will pitch initial plans in Round 1 ]
               </div>
-            </div>
+            ) : (
+              proposals.map((prop) => (
+                <div
+                  key={prop.id}
+                  className={`p-2 border transition-all text-xs ${
+                    prop.isEliminated
+                      ? "border-[#EF4444]/40 bg-[#EF4444]/5 opacity-60 line-through text-[#EF4444]"
+                      : prop.scoreAvg >= 8
+                      ? "border-[#22C55E]/60 bg-[#22C55E]/5 text-[#ECEFF4]"
+                      : "border-[#1E2228] bg-[#0A0A0C] text-[#ECEFF4]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold text-[#FF6E26] truncate max-w-[150px]">
+                      {prop.title}
+                    </span>
+                    <span
+                      className={`text-[9px] font-mono px-1 border ${
+                        prop.isEliminated
+                          ? "border-[#EF4444] text-[#EF4444] bg-[#EF4444]/10 no-underline"
+                          : prop.scoreAvg >= 8
+                          ? "border-[#22C55E] text-[#22C55E] bg-[#22C55E]/10"
+                          : "border-[#2A303A] text-[#8B949E]"
+                      }`}
+                    >
+                      {prop.isEliminated ? "ELIMINATED" : `SCORE: ${prop.scoreAvg}/10`}
+                    </span>
+                  </div>
+
+                  <p className="text-[10px] text-[#8B949E] line-clamp-2 leading-relaxed">
+                    {prop.content}
+                  </p>
+
+                  {prop.critique && !prop.isEliminated && (
+                    <div className="mt-1 text-[8px] text-[#EF4444] font-mono flex items-center gap-1">
+                      <XCircle className="h-2.5 w-2.5 flex-shrink-0" />
+                      <span className="truncate">Flaw: {prop.critique}</span>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
 
-          {/* Flowing data stream (bottom) */}
-          <div className="overflow-hidden">
-            <motion.div
-              animate={{ x: [-80, 0] }}
-              transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
-              className="text-[7px] text-[#1E2228] font-mono whitespace-nowrap py-0.5 px-2 select-none"
-            >
-              {stream1}{stream1}
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Bottom Status Bar */}
-        <div className="flex items-center justify-between px-3 py-1 border-t border-[#1E2228] bg-[#0E1013]">
-          <div className="flex items-center gap-3">
-            <span className="text-[8px] text-[#525A66] font-mono">
-              AGENTS:{agentCount}
-            </span>
-            <span className="text-[8px] text-[#525A66] font-mono">
-              STATUS:{isLive ? "DELIBERATING" : "STANDBY"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Miniature activity bar */}
-            <div className="flex items-center gap-[2px]">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-[3px] bg-[#FF6E26]"
-                  animate={{
-                    height: isLive ? [2, 4 + Math.random() * 6, 2] : [2, 3, 2],
-                    opacity: isLive ? [0.3, 0.8, 0.3] : 0.15,
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 0.8 + i * 0.15,
-                    ease: "easeInOut",
-                    delay: i * 0.08,
-                  }}
-                />
-              ))}
-            </div>
-            <span className="text-[8px] text-[#525A66] font-mono">
-              ◆ THE_COUNCIL
-            </span>
+          <div className="text-[8px] text-[#525A66] pt-1.5 border-t border-[#1E2228] mt-2 flex items-center justify-between">
+            <span>PEER VOTED</span>
+            <span>CHIEF ARBITRATOR CROWNS 1 WINNER</span>
           </div>
         </div>
       </div>

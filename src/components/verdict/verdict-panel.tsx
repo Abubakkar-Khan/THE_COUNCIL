@@ -49,12 +49,12 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         </div>
       </div>
 
-      {/* Primary Recommendation Banner in Warm Orange */}
+      {/* Primary Recommendation Banner: CROWNED TOURNAMENT WINNER */}
       <div className="mb-5 p-4 border border-[#FF6E26] bg-[#FF6E26]/10 relative">
         <div className="flex items-center justify-between text-[10px] text-[#FF6E26] mb-1 font-semibold font-mono">
-          <span>// RECOMMENDATION</span>
+          <span>// CROWNED_STRATEGY</span>
           <span className="bg-[#FF6E26] text-[#0A0A0C] px-1.5 py-0.2 font-bold text-[8px]">
-            [BINDING]
+            [BINDING EXECUTION]
           </span>
         </div>
         <p className="text-sm md:text-base font-semibold text-[#ECEFF4] leading-snug font-mono">
@@ -65,7 +65,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
       {/* Synthesis Summary */}
       <div className="mb-5 p-4 border border-[#1E2228] bg-[#0A0A0C]">
         <h3 className="text-[10px] text-[#8B949E] uppercase tracking-wider mb-1.5 font-semibold font-mono">
-          // JUDICIAL_SYNTHESIS
+          // WHY_THIS_PLAN_SURVIVED
         </h3>
         <p className="text-xs text-[#ECEFF4] leading-relaxed whitespace-pre-wrap font-mono">
           {verdict.summary}
@@ -77,9 +77,9 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         {/* Supporting Points */}
         <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
-            <CheckCircle2 className="h-3.5 w-3.5 text-[#FF6E26]" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#22C55E]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
-              Supporting Arguments
+              Asymmetric Leverage & Winning Edge
             </h4>
           </div>
           <p className="text-[11px] text-[#8B949E] leading-relaxed whitespace-pre-wrap">
@@ -87,12 +87,12 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
           </p>
         </div>
 
-        {/* Counterpoints */}
+        {/* Counterpoints & Eliminated Ideas */}
         <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
-            <AlertTriangle className="h-3.5 w-3.5 text-[#FF6E26]" />
+            <AlertTriangle className="h-3.5 w-3.5 text-[#EF4444]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
-              Counterpoints & Concerns
+              Eliminated Plans & Fatal Flaws
             </h4>
           </div>
           <p className="text-[11px] text-[#8B949E] leading-relaxed whitespace-pre-wrap">
@@ -105,7 +105,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <ShieldAlert className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
-              Key Risks
+              Fatal Trap to Avoid
             </h4>
           </div>
           <p className="text-[11px] text-[#8B949E] leading-relaxed whitespace-pre-wrap">
@@ -118,7 +118,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <HelpCircle className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
-              Unresolved Tensions
+              Tension with Runner-Up
             </h4>
           </div>
           <p className="text-[11px] text-[#8B949E] leading-relaxed whitespace-pre-wrap">
@@ -132,7 +132,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         <div className="flex items-center gap-1.5 text-[#FF6E26] mb-2 font-semibold">
           <CheckSquare className="h-3.5 w-3.5" />
           <h4 className="text-[10px] tracking-wider uppercase">
-            Recommended Action Plan
+            Tactical Execution Checklist (Chronological)
           </h4>
         </div>
 
