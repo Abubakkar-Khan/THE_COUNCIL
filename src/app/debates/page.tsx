@@ -117,6 +117,7 @@ export default async function DebateHistoryPage() {
                         >
                           <BlobAvatar
                             name={dp.persona?.name || "Agent"}
+                            persona={dp.persona}
                             size="xs"
                           />
                           <span className="hidden sm:inline text-[10px]">

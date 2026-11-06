@@ -22,7 +22,8 @@ function formatRelativeTime(dateStr: string | Date | undefined) {
 }
 
 export function ChatBubble({ contribution, index }: ChatBubbleProps) {
-  const personaName = contribution.persona?.name || "Council Member";
+  const isUser = contribution.role === "user" || !contribution.personaId;
+  const personaName = isUser ? "YOU // DIRECTOR" : contribution.persona?.name || "Council Member";
   const time = formatRelativeTime(contribution.createdAt);
 
   // Format content to highlight @mentions in warm orange
@@ -33,7 +34,7 @@ export function ChatBubble({ contribution, index }: ChatBubbleProps) {
         return (
           <span
             key={i}
-            className="font-semibold text-[#FF6E26] bg-[#FF6E26]/10 px-1 py-0.2 rounded-xs"
+            className="font-semibold text-[#FF6E26] bg-[#FF6E26]/10 px-1 py-0.2"
           >
             {part}
           </span>
@@ -52,23 +53,59 @@ export function ChatBubble({ contribution, index }: ChatBubbleProps) {
         ease: [0.16, 1, 0.3, 1], // Buttery smooth spring curve
         delay: Math.min(index * 0.03, 0.2),
       }}
-      className="group relative flex items-start gap-3 py-3 border-b border-dashed border-[#1E2228] select-none font-mono-code transition-colors hover:bg-[#0E1013]/50"
+      className={`group relative flex items-start gap-3 py-3 border-b border-dashed border-[#1E2228] select-none font-mono-code transition-colors ${
+        isUser ? "bg-[#00E5FF]/5 hover:bg-[#00E5FF]/10" : "hover:bg-[#0E1013]/50"
+      }`}
     >
-      {/* Orange Vertical Accent Bar with ambient glow */}
-      <div className="w-0.5 self-stretch bg-[#FF6E26] opacity-90 flex-shrink-0 shadow-[0_0_8px_rgba(255,110,38,0.3)] transition-all group-hover:shadow-[0_0_12px_rgba(255,110,38,0.5)]" />
+      {/* Vertical Accent Bar: Cyan for User, Orange for Persona */}
+      <div
+        className={`w-0.5 self-stretch opacity-90 flex-shrink-0 transition-all ${
+          isUser
+            ? "bg-[#00E5FF] shadow-[0_0_8px_rgba(0,229,255,0.4)] group-hover:shadow-[0_0_12px_rgba(0,229,255,0.7)]"
+            : "bg-[#FF6E26] shadow-[0_0_8px_rgba(255,110,38,0.3)] group-hover:shadow-[0_0_12px_rgba(255,110,38,0.5)]"
+        }`}
+      />
 
       {/* Bit Cat Avatar */}
       <div className="pt-0.5 flex-shrink-0">
-        <BlobAvatar name={personaName} size="md" isSpeaking={index === 0} />
+        <BlobAvatar
+          name={personaName}
+          persona={contribution.persona || undefined}
+          dress={
+            isUser
+              ? {
+                  ears: "antenna",
+                  eyes: "visor",
+                  accessory: "headset",
+                  accentColor: "#00E5FF",
+                }
+              : undefined
+          }
+          size="md"
+          isSpeaking={index === 0}
+        />
       </div>
 
       {/* Message Content Area */}
       <div className="flex-1 min-w-0 pr-2">
-        {/* Header: Persona Name + Relative Timestamp */}
-        <div className="flex items-baseline gap-2 mb-1">
-          <span className="font-semibold text-xs md:text-sm text-[#ECEFF4] tracking-tight">
+        {/* Header: Persona Name + Tag + Relative Timestamp */}
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <span
+            className={`font-semibold text-xs md:text-sm tracking-tight ${
+              isUser ? "text-[#00E5FF]" : "text-[#ECEFF4]"
+            }`}
+          >
             {personaName}
           </span>
+          {isUser ? (
+            <span className="text-[9px] font-mono px-1 py-0.2 border border-[#00E5FF]/40 bg-[#00E5FF]/10 text-[#00E5FF]">
+              [DIRECTOR]
+            </span>
+          ) : (
+            <span className="text-[9px] font-mono px-1 py-0.2 border border-[#2A303A] bg-[#0E1013] text-[#8B949E]">
+              [R{contribution.roundNumber}]
+            </span>
+          )}
           <span className="text-[10px] text-[#525A66] font-mono">
             [{time}]
           </span>

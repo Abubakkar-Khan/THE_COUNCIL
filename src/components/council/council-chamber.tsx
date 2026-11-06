@@ -73,6 +73,8 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
     (p) => !spokenPersonaIds.has(p.persona.id)
   )?.persona;
 
+  const [isSending, setIsSending] = useState(false);
+
   const activeSpeakerName =
     debate.status === "in_progress"
       ? nextPersonaToSpeak?.name ||
@@ -80,11 +82,58 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
         debate.personas?.[0]?.persona?.name
       : undefined;
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userMessage.trim()) return;
-    // In our live session, we can prompt or add comments
+    const text = userMessage.trim();
+    if (!text || isSending) return;
+
     setUserMessage("");
+    setIsSending(true);
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticContribution: Contribution = {
+      id: tempId,
+      debateId: debate.id,
+      personaId: null,
+      roundNumber: currentRound,
+      role: "user",
+      content: text,
+      createdAt: new Date().toISOString(),
+      persona: null,
+    };
+
+    // Optimistically update conversation tape
+    setDebate((prev) => ({
+      ...prev,
+      contributions: [...(prev.contributions || []), optimisticContribution],
+    }));
+
+    try {
+      const res = await fetch(`/api/debates/${debate.id}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: text,
+          roundNumber: currentRound,
+        }),
+      });
+
+      if (res.ok) {
+        const saved: Contribution = await res.json();
+        // Replace temporary entry with committed DB record
+        setDebate((prev) => ({
+          ...prev,
+          contributions: (prev.contributions || []).map((c) =>
+            c.id === tempId ? saved : c
+          ),
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to record conversation message:", err);
+    } finally {
+      setIsSending(false);
+      chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const scrollToVerdict = () => {
@@ -223,10 +272,11 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
 
             <button
               type="submit"
-              className="h-7 px-3 bg-[#FF6E26] text-[#0A0A0C] hover:bg-[#FF853E] font-bold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer flex-shrink-0 shadow-sm"
+              disabled={!userMessage.trim() || isSending}
+              className="h-7 px-3 bg-[#FF6E26] text-[#0A0A0C] hover:bg-[#FF853E] font-bold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer flex-shrink-0 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
               title="Send"
             >
-              <span>SEND</span>
+              <span>{isSending ? "LOGGING..." : "SEND"}</span>
               <Send className="h-3 w-3" />
             </button>
           </div>

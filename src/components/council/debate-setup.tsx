@@ -189,7 +189,7 @@ export function DebateSetup() {
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <BlobAvatar name={persona.name} size="sm" isSpeaking={isSelected} />
+                    <BlobAvatar name={persona.name} persona={persona} size="sm" isSpeaking={isSelected} />
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-[#ECEFF4] truncate">
                         {persona.name}

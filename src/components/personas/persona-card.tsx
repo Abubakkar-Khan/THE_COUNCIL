@@ -26,7 +26,7 @@ export function PersonaCard({ persona, onEdit, onDuplicate, onDelete }: PersonaC
         {/* Top: Avatar + Action Buttons */}
         <div className="flex items-start justify-between mb-3 border-b border-[#1E2228] pb-2.5">
           <div className="flex items-center gap-2.5">
-            <BlobAvatar name={persona.name} size="md" />
+            <BlobAvatar name={persona.name} persona={persona} size="md" />
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-semibold text-xs text-[#ECEFF4] group-hover:text-[#FF6E26] transition-colors">

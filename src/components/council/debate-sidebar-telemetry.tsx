@@ -78,6 +78,7 @@ export function DebateSidebarTelemetry({
                 <div className="flex items-center gap-2 min-w-0">
                   <BlobAvatar
                     name={persona.name}
+                    persona={persona}
                     size="sm"
                     isSpeaking={isSpeaking}
                   />

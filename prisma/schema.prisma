@@ -56,14 +56,14 @@ model DebatePersona {
 model Contribution {
   id          String   @id @default(cuid())
   debateId    String
-  personaId   String
+  personaId   String?
   roundNumber Int
-  role        String   @default("persona") // persona, judge
+  role        String   @default("persona") // persona, judge, user
   content     String
   createdAt   DateTime @default(now())
 
-  debate  Debate  @relation(fields: [debateId], references: [id], onDelete: Cascade)
-  persona Persona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  debate  Debate   @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  persona Persona? @relation(fields: [personaId], references: [id], onDelete: Cascade)
 }
 
 model Verdict {

@@ -56,12 +56,12 @@ export type DebateStatus = "pending" | "in_progress" | "completed" | "failed";
 export interface Contribution {
   id: string;
   debateId: string;
-  personaId: string;
+  personaId: string | null;
   roundNumber: number;
   role: string;
   content: string;
   createdAt: string | Date;
-  persona?: Persona;
+  persona?: Persona | null;
 }
 
 export interface Verdict {

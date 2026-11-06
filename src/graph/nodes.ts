@@ -62,14 +62,28 @@ export async function initializeDebate(
 export async function generateRoundContributions(
   state: CouncilStateType
 ): Promise<Partial<CouncilStateType>> {
-  const { personas, question, currentRound, contributions, debateId } = state;
+  const { personas, question, currentRound, debateId } = state;
+
+  // Retrieve full conversation transcript recorded so far (including user messages)
+  const recordedContributions = await prisma.contribution.findMany({
+    where: { debateId },
+    include: { persona: true },
+    orderBy: [{ roundNumber: "asc" }, { createdAt: "asc" }],
+  });
+
+  const fullConversationHistory: ContributionEntry[] = recordedContributions.map((c) => ({
+    personaId: c.personaId || "user",
+    personaName: c.persona?.name || (c.role === "user" ? "Director (You)" : "Council Mind"),
+    roundNumber: c.roundNumber,
+    content: c.content,
+  }));
 
   const tasks = personas.map((persona) => async (): Promise<ContributionEntry> => {
     const content = await executePersonaRound(
       persona,
       question,
       currentRound,
-      contributions
+      fullConversationHistory
     );
 
     // Save to database
@@ -113,9 +127,23 @@ export async function advanceRound(
 export async function judgeEvaluation(
   state: CouncilStateType
 ): Promise<Partial<CouncilStateType>> {
-  const { question, contributions, debateId } = state;
+  const { question, debateId } = state;
 
-  const verdictData = await executeJudge(question, contributions);
+  // Read entire debate conversation transcript from DB so judge weighs user interventions too
+  const allRecorded = await prisma.contribution.findMany({
+    where: { debateId },
+    include: { persona: true },
+    orderBy: [{ roundNumber: "asc" }, { createdAt: "asc" }],
+  });
+
+  const conversationTranscript: ContributionEntry[] = allRecorded.map((c) => ({
+    personaId: c.personaId || "user",
+    personaName: c.persona?.name || (c.role === "user" ? "Director (You)" : "Council Mind"),
+    roundNumber: c.roundNumber,
+    content: c.content,
+  }));
+
+  const verdictData = await executeJudge(question, conversationTranscript);
 
   // Save verdict to database
   await prisma.verdict.create({

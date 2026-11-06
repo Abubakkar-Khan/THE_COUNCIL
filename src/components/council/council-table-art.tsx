@@ -243,6 +243,7 @@ export function CouncilTableArt({
                 {/* The Bit Cat Avatar */}
                 <BlobAvatar
                   name={persona.name}
+                  persona={persona}
                   size="md"
                   isSpeaking={isSpeaking}
                   isTyping={isSpeaking && isLive}
