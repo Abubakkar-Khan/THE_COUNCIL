@@ -55,9 +55,9 @@ export function ChatBubble({ contribution, index }: ChatBubbleProps) {
       className="group relative flex items-start gap-3 py-3 border-b border-dashed border-[#1E2228] select-none font-mono-code transition-colors hover:bg-[#0E1013]/50"
     >
       {/* Orange Vertical Accent Bar with ambient glow */}
-      <div className="w-1 self-stretch rounded-xs bg-[#FF6E26] opacity-90 flex-shrink-0 shadow-[0_0_8px_rgba(255,110,38,0.3)] transition-all group-hover:shadow-[0_0_12px_rgba(255,110,38,0.5)]" />
+      <div className="w-0.5 self-stretch bg-[#FF6E26] opacity-90 flex-shrink-0 shadow-[0_0_8px_rgba(255,110,38,0.3)] transition-all group-hover:shadow-[0_0_12px_rgba(255,110,38,0.5)]" />
 
-      {/* Cute Blob Cat Avatar */}
+      {/* Bit Cat Avatar */}
       <div className="pt-0.5 flex-shrink-0">
         <BlobAvatar name={personaName} size="md" isSpeaking={index === 0} />
       </div>
@@ -65,12 +65,12 @@ export function ChatBubble({ contribution, index }: ChatBubbleProps) {
       {/* Message Content Area */}
       <div className="flex-1 min-w-0 pr-2">
         {/* Header: Persona Name + Relative Timestamp */}
-        <div className="flex items-baseline gap-2.5 mb-1">
+        <div className="flex items-baseline gap-2 mb-1">
           <span className="font-semibold text-xs md:text-sm text-[#ECEFF4] tracking-tight">
             {personaName}
           </span>
-          <span className="text-[11px] text-[#525A66]">
-            {time}
+          <span className="text-[10px] text-[#525A66] font-mono">
+            [{time}]
           </span>
         </div>
 

@@ -45,21 +45,25 @@ function CatHeadIcon({ className }: { className?: string }) {
 
 const navigation = [
   {
+    idx: "01",
     name: "Debate",
     href: "/debates/new",
     icon: MessageSquare,
   },
   {
+    idx: "02",
     name: "Agents",
     href: "/personas",
     icon: CatHeadIcon,
   },
   {
+    idx: "03",
     name: "Library",
     href: "/",
     icon: BookOpen,
   },
   {
+    idx: "04",
     name: "History",
     href: "/debates",
     icon: History,
@@ -70,15 +74,15 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-56 flex-col border-r border-dashed border-[#1E2228] bg-[#0A0A0C] font-mono-code text-xs select-none">
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-56 flex-col border-r border-[#1E2228] bg-[#0A0A0C] font-mono-code text-xs select-none">
       {/* Brand Header */}
-      <div className="flex items-center gap-3 p-5 border-b border-dashed border-[#1E2228]">
+      <div className="flex items-center gap-3 p-4 border-b border-[#1E2228] bg-[#0E1013]/50">
         {/* 4 Orange Squares (2x2 Grid) */}
         <div className="grid grid-cols-2 gap-1 flex-shrink-0">
-          <div className="w-2.5 h-2.5 rounded-[2px] border-2 border-[#FF6E26]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] border-2 border-[#FF6E26]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] border-2 border-[#FF6E26]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] border-2 border-[#FF6E26]" />
+          <div className="w-2.5 h-2.5 border-2 border-[#FF6E26]" />
+          <div className="w-2.5 h-2.5 border-2 border-[#FF6E26]" />
+          <div className="w-2.5 h-2.5 border-2 border-[#FF6E26]" />
+          <div className="w-2.5 h-2.5 border-2 border-[#FF6E26]" />
         </div>
 
         <div>
@@ -92,7 +96,11 @@ export function Sidebar() {
       </div>
 
       {/* Nav List */}
-      <nav className="flex-1 px-3 py-5 space-y-2">
+      <nav className="flex-1 px-2.5 py-4 space-y-1.5">
+        <div className="px-2 pb-1.5 text-[9px] text-[#525A66] font-mono tracking-wider">
+          // SYS_NAVIGATION
+        </div>
+
         {navigation.map((item) => {
           const isActive =
             item.href === "/"
@@ -104,28 +112,40 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "group flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition-all",
+                "group flex items-center justify-between px-2.5 py-2 border text-xs font-mono transition-all",
                 isActive
-                  ? "border-[#FF6E26] bg-[#FF6E26]/10 text-[#ECEFF4] shadow-[0_0_12px_rgba(255,110,38,0.15)] font-medium"
+                  ? "border-l-2 border-l-[#FF6E26] border-y border-r border-[#1E2228] bg-[#14171C] text-[#ECEFF4] font-medium"
                   : "border-transparent text-[#8B949E] hover:border-[#1E2228] hover:text-[#ECEFF4] hover:bg-[#0E1013]"
               )}
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
+                <span
+                  className={cn(
+                    "text-[10px] font-mono",
+                    isActive ? "text-[#FF6E26]" : "text-[#525A66]"
+                  )}
+                >
+                  {isActive ? ">" : item.idx}
+                </span>
                 <item.icon
                   className={cn(
-                    "h-4 w-4 transition-colors",
+                    "h-3.5 w-3.5 transition-colors",
                     isActive ? "text-[#FF6E26]" : "text-[#8B949E] group-hover:text-[#ECEFF4]"
                   )}
                 />
-                <span>{item.name}</span>
+                <span className="tracking-tight">{item.name}</span>
               </div>
+
+              {isActive && (
+                <span className="text-[10px] text-[#FF6E26] font-bold">◄</span>
+              )}
             </Link>
           );
         })}
       </nav>
 
       {/* Bottom ASCII Dithered Mountain Peaks & Stars */}
-      <div className="p-4 border-t border-dashed border-[#1E2228] relative overflow-hidden text-[#525A66]">
+      <div className="p-3 border-t border-[#1E2228] relative overflow-hidden text-[#525A66] bg-[#0A0A0C]">
         <svg
           viewBox="0 0 180 85"
           fill="none"

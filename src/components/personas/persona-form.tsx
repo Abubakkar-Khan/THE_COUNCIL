@@ -89,15 +89,15 @@ export function PersonaForm({ open, onOpenChange, persona, onSubmit }: PersonaFo
       <DialogClose onClick={() => onOpenChange(false)} />
       <DialogHeader>
         <div className="flex items-center gap-2 mb-1">
-          <span className="font-pixel text-[8px] bg-[#FF5722] text-white px-1.5 py-0.2 rounded-xs">
-            CHIP_FORGE
+          <span className="font-mono text-[9px] bg-[#FF6E26] text-[#0A0A0C] font-bold px-1.5 py-0.2">
+            [CHIP_FORGE]
           </span>
-          <span className="font-mono-code text-[10px] text-[#5A626C]">
-            // PERSPECTIVE SYNTHESIS
+          <span className="font-mono-code text-[10px] text-[#525A66]">
+            // COGNITIVE_SYNTHESIS
           </span>
         </div>
-        <DialogTitle className="font-pixel text-base text-[#F0F3F6]">
-          {persona ? "RECALIBRATE PERSONA" : "FORGE NEW PERSONA"}
+        <DialogTitle className="font-mono text-base text-[#ECEFF4] font-bold">
+          {persona ? "[ RECALIBRATE PERSONA ]" : "[ FORGE NEW PERSONA ]"}
         </DialogTitle>
         <DialogDescription className="font-mono-code text-xs text-[#8B949E]">
           {persona
@@ -108,10 +108,10 @@ export function PersonaForm({ open, onOpenChange, persona, onSubmit }: PersonaFo
 
       <form onSubmit={handleSubmit} className="font-mono-code select-none">
         <DialogContent>
-          <div className="space-y-3.5 max-h-[50vh] overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
             {fields.map((field) => (
               <div key={field.key}>
-                <label className="text-[9px] font-pixel text-[#8B949E] mb-1 block uppercase tracking-wider">
+                <label className="text-[9px] font-mono text-[#8B949E] mb-1 block uppercase tracking-wider">
                   {field.label}
                 </label>
                 {field.multiline ? (
@@ -122,7 +122,7 @@ export function PersonaForm({ open, onOpenChange, persona, onSubmit }: PersonaFo
                     }
                     placeholder={field.placeholder}
                     rows={2}
-                    className="bg-[#0C0D0E] border-[#2A2E33] focus:border-[#FF5722] text-xs font-mono-code rounded-xs resize-none"
+                    className="bg-[#0A0A0C] border-[#1E2228] focus:border-[#FF6E26] text-xs font-mono-code resize-none"
                   />
                 ) : (
                   <Input
@@ -131,7 +131,7 @@ export function PersonaForm({ open, onOpenChange, persona, onSubmit }: PersonaFo
                       setFormData({ ...formData, [field.key]: e.target.value })
                     }
                     placeholder={field.placeholder}
-                    className="bg-[#0C0D0E] border-[#2A2E33] focus:border-[#FF5722] text-xs font-mono-code rounded-xs h-9"
+                    className="bg-[#0A0A0C] border-[#1E2228] focus:border-[#FF6E26] text-xs font-mono-code h-8"
                   />
                 )}
               </div>
@@ -139,24 +139,24 @@ export function PersonaForm({ open, onOpenChange, persona, onSubmit }: PersonaFo
           </div>
 
           {error && (
-            <p className="text-xs text-[#F43F5E] bg-[#F43F5E]/10 border border-[#F43F5E]/30 p-2 rounded-xs mt-2 font-pixel text-[9px]">
+            <p className="text-xs text-[#F43F5E] bg-[#F43F5E]/10 border border-[#F43F5E]/30 p-2 mt-2 font-mono text-[9px]">
               [!] {error}
             </p>
           )}
         </DialogContent>
 
-        <DialogFooter className="mt-4 pt-3 border-t border-[#22262B]">
+        <DialogFooter className="mt-4 pt-3 border-t border-[#1E2228]">
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="btn-tactile px-3 py-1.5 text-[10px] font-pixel rounded-xs cursor-pointer"
+            className="px-3 py-1.5 text-xs font-mono border border-[#1E2228] text-[#8B949E] hover:text-[#ECEFF4] cursor-pointer"
           >
             [ESC] CANCEL
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-tactile-accent px-4 py-1.5 text-[10px] font-pixel rounded-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="btn-terminal-accent px-4 py-1.5 text-xs font-mono font-bold border border-[#FF853E] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             {isSubmitting && <Loader2 className="h-3 w-3 animate-spin" />}
             <span>{persona ? "[UPDATE CHIP]" : "[FORGE CHIP]"}</span>

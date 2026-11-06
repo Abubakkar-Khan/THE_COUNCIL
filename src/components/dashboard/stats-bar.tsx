@@ -49,15 +49,15 @@ export function StatsBar({ totalPersonas, totalDebates, completedDebates }: Stat
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: i * 0.04 }}
-          className="p-4 rounded-md border border-dashed border-[#1E2228] bg-[#0E1013] hover:border-[#2A303A] transition-colors"
+          className="p-3.5 border border-[#1E2228] bg-[#0E1013] hover:border-[#FF6E26]/50 transition-colors"
         >
-          <div className="flex items-center justify-between text-[#8B949E] text-xs mb-2">
-            <span>{stat.label}</span>
-            <stat.icon className="h-3.5 w-3.5 text-[#525A66]" />
+          <div className="flex items-center justify-between text-[#8B949E] text-[11px] mb-2 font-mono">
+            <span>// {stat.label.toUpperCase()}</span>
+            <stat.icon className="h-3 w-3 text-[#525A66]" />
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className={`text-2xl font-bold ${stat.color} tracking-tight font-display`}>
+            <span className={`text-2xl font-bold ${stat.color} tracking-tight font-mono`}>
               {stat.value}
             </span>
             <span className="text-[10px] text-[#525A66] font-mono">

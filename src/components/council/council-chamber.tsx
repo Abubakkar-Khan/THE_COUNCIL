@@ -96,32 +96,33 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
     <div className="flex w-full min-h-screen font-mono-code text-xs select-none">
       {/* Center Column: The Main Debate Feed */}
       <div className="flex-1 flex flex-col px-4 md:px-8 py-5 min-w-0">
-        {/* Top Header Bar: [● R2 · DEBATE] ---------- ● LIVE */}
-        <div className="flex items-center justify-between gap-4 mb-3">
+        {/* Top Header Bar: [ R2 · DEBATE ] --------------------------- [ ● LIVE ] */}
+        <div className="flex items-center justify-between gap-4 mb-3 border-b border-[#1E2228] pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-dashed border-[#2A303A] bg-[#0E1013] text-xs font-mono">
-              <span className="h-2 w-2 rounded-full bg-[#FF6E26]" />
+            <div className="flex items-center gap-2 px-2.5 py-1 border border-[#2A303A] bg-[#0E1013] text-xs font-mono">
+              <span className="h-2 w-2 bg-[#FF6E26]" />
               <span className="text-[#ECEFF4] font-medium tracking-tight">
                 {debate.status === "completed"
-                  ? "FINAL · VERDICT"
-                  : `R${currentRound} · DEBATE`}
+                  ? "[ FINAL · VERDICT ]"
+                  : `[ R${currentRound} · DEBATE ]`}
               </span>
             </div>
+            <span className="text-[10px] text-[#525A66] hidden md:inline font-mono">
+              // CHAMBER_SESSION: {debate.id.slice(-8)}
+            </span>
           </div>
 
-          <div className="flex-1 border-t border-dashed border-[#1E2228] mx-2 hidden sm:block" />
-
-          <div className="flex items-center gap-1.5 text-xs font-mono">
+          <div className="flex items-center gap-2 text-xs font-mono">
             {debate.status === "in_progress" && (
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#FF6E26] animate-radar" />
-                <span className="text-[#FF6E26] font-semibold tracking-wider">LIVE</span>
+              <div className="flex items-center gap-2 px-2 py-0.5 border border-[#FF6E26]/40 bg-[#FF6E26]/10">
+                <span className="h-1.5 w-1.5 bg-[#FF6E26] animate-radar" />
+                <span className="text-[#FF6E26] font-semibold tracking-wider text-[11px]">[ LIVE ]</span>
               </div>
             )}
             {debate.status === "completed" && (
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#A3E635]" />
-                <span className="text-[#A3E635] font-semibold tracking-wider">CONCLUDED</span>
+              <div className="flex items-center gap-2 px-2 py-0.5 border border-[#A3E635]/40 bg-[#A3E635]/10">
+                <span className="h-1.5 w-1.5 bg-[#A3E635]" />
+                <span className="text-[#A3E635] font-semibold tracking-wider text-[11px]">[ CONCLUDED ]</span>
               </div>
             )}
           </div>
@@ -129,6 +130,9 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
 
         {/* Large Chunky Question Heading */}
         <div className="mb-4">
+          <div className="text-[10px] text-[#FF6E26] font-mono mb-1">
+            // ACTIVE_DILEMMA
+          </div>
           <h1 className="text-xl md:text-2xl font-bold font-mono text-[#ECEFF4] tracking-tight leading-snug">
             {debate.userQuestion}
           </h1>
@@ -166,7 +170,7 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
             </div>
           )}
 
-          {/* Live Typing Indicator: [...] Persona is typing... */}
+          {/* Live Typing Indicator: [ ··· ] Persona is typing... */}
           <AnimatePresence>
             {debate.status === "in_progress" && activeSpeakerName && (
               <motion.div
@@ -174,15 +178,15 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                className="flex items-center gap-3 py-3 text-xs text-[#8B949E]"
+                className="flex items-center gap-3 py-2.5 text-xs text-[#8B949E]"
               >
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-dashed border-[#2A303A] bg-[#0E1013] text-[#FF6E26]">
-                  <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:0ms]" />
-                  <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:150ms]" />
-                  <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:300ms]" />
+                <div className="flex items-center gap-1 px-2 py-0.5 border border-[#2A303A] bg-[#0E1013] text-[#FF6E26]">
+                  <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:0ms]" />
+                  <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:150ms]" />
+                  <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:300ms]" />
                 </div>
                 <span className="font-mono tracking-tight text-[#D8DEE9]">
-                  <span className="text-[#FF6E26] font-semibold">{activeSpeakerName}</span> is typing...
+                  <span className="text-[#FF6E26] font-semibold">{activeSpeakerName}</span> is deliberating...
                 </span>
               </motion.div>
             )}
@@ -191,34 +195,39 @@ export function CouncilChamber({ initialDebate }: CouncilChamberProps) {
           <div ref={chatBottomRef} />
         </div>
 
-        {/* Message Input Bar (Matching Reference Image) */}
+        {/* Message Input Bar (Sharp Terminal Command Box) */}
         <form
           onSubmit={handleSendMessage}
           className="sticky bottom-4 z-20 mt-auto pt-2"
         >
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-dashed border-[#2A303A] bg-[#0E1013]/95 backdrop-blur-md shadow-lg">
+          <div className="flex items-center gap-2 p-1.5 border border-[#2A303A] bg-[#0E1013] shadow-xl">
             <button
               type="button"
-              className="h-7 w-7 rounded-full border border-dashed border-[#3A404D] text-[#8B949E] hover:text-[#ECEFF4] hover:border-[#FF6E26] flex items-center justify-center transition-colors cursor-pointer"
+              className="h-7 w-7 border border-[#2A303A] bg-[#0A0A0C] text-[#8B949E] hover:text-[#ECEFF4] hover:border-[#FF6E26] flex items-center justify-center transition-colors cursor-pointer text-xs font-mono"
               title="Add directive"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
+
+            <div className="text-[11px] text-[#FF6E26] font-mono select-none px-1">
+              &gt;
+            </div>
 
             <input
               type="text"
               value={userMessage}
               onChange={(e) => setUserMessage(e.target.value)}
               placeholder="Message the council..."
-              className="flex-1 bg-transparent border-none text-xs text-[#ECEFF4] placeholder:text-[#525A66] focus:outline-none font-mono-code px-2"
+              className="flex-1 bg-transparent border-none text-xs text-[#ECEFF4] placeholder:text-[#525A66] focus:outline-none font-mono-code px-1"
             />
 
             <button
               type="submit"
-              className="h-7 w-7 rounded-full bg-[#FF6E26] text-[#0A0A0C] hover:bg-[#FF853E] flex items-center justify-center transition-colors cursor-pointer flex-shrink-0 shadow-sm"
+              className="h-7 px-3 bg-[#FF6E26] text-[#0A0A0C] hover:bg-[#FF853E] font-bold text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer flex-shrink-0 shadow-sm"
               title="Send"
             >
-              <Send className="h-3.5 w-3.5" />
+              <span>SEND</span>
+              <Send className="h-3 w-3" />
             </button>
           </div>
         </form>

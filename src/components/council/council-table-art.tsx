@@ -222,25 +222,25 @@ export function CouncilTableArt({
                   className="mb-1"
                 >
                   <div
-                    className={`px-2 py-0.5 rounded-sm border text-[9px] font-mono flex items-center justify-center transition-colors duration-300 ${
+                    className={`px-1.5 py-0.5 border text-[9px] font-mono flex items-center justify-center transition-colors duration-300 ${
                       isSpeaking
                         ? "border-[#FF6E26] bg-[#0E1013] text-[#FF6E26] shadow-[0_0_8px_rgba(255,110,38,0.25)]"
-                        : "border-[#ECEFF4]/30 border-dashed bg-[#0A0A0C]/90 text-[#ECEFF4]/60"
+                        : "border-[#2A303A] bg-[#0A0A0C] text-[#8B949E]"
                     }`}
                   >
                     {isSpeaking ? (
-                      <span className="flex items-center gap-0.5 px-0.5">
-                        <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:0ms]" />
-                        <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:150ms]" />
-                        <span className="h-1 w-1 rounded-full bg-[#FF6E26] animate-bounce [animation-delay:300ms]" />
+                      <span className="flex items-center gap-1 px-0.5">
+                        <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:0ms]" />
+                        <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:150ms]" />
+                        <span className="h-1 w-1 bg-[#FF6E26] animate-bounce [animation-delay:300ms]" />
                       </span>
                     ) : (
-                      <span>···</span>
+                      <span>[···]</span>
                     )}
                   </div>
                 </motion.div>
 
-                {/* The Blob Creature Avatar */}
+                {/* The Bit Cat Avatar */}
                 <BlobAvatar
                   name={persona.name}
                   size="md"
@@ -249,7 +249,7 @@ export function CouncilTableArt({
                   className="shadow-sm"
                 />
 
-                {/* Subtle Name Tag */}
+                {/* Subtle Monospace Name Tag */}
                 <span
                   className={`mt-1 font-mono text-[9px] tracking-tight truncate max-w-[70px] text-center transition-colors duration-300 ${
                     isSpeaking ? "text-[#FF6E26] font-semibold" : "text-[#8B949E]"

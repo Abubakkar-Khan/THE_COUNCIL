@@ -21,53 +21,53 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="p-6 md:p-8 rounded-md border border-dashed border-[#1E2228] bg-[#0E1013] select-none font-mono-code relative"
+      className="p-6 md:p-8 border border-[#1E2228] bg-[#0E1013] select-none font-mono-code relative"
     >
       {/* Top Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-dashed border-[#1E2228] pb-4 mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1E2228] pb-4 mb-5">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-sm border border-[#FF6E26] bg-[#FF6E26]/10 flex items-center justify-center text-[#FF6E26] text-base flex-shrink-0">
+          <div className="h-9 w-9 border border-[#FF6E26] bg-[#FF6E26]/10 flex items-center justify-center text-[#FF6E26] text-base flex-shrink-0">
             ⚖
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] px-2 py-0.5 rounded-full border border-dashed border-[#1E2228] text-[#FF6E26] bg-[#0A0A0C]">
-                JUDICIAL · VERDICT
+              <span className="text-[10px] px-2 py-0.5 border border-[#FF6E26]/40 text-[#FF6E26] bg-[#0A0A0C]">
+                [ JUDICIAL · VERDICT ]
               </span>
               <span className="text-[10px] text-[#525A66]">
-                // BINDING DECREE
+                // BINDING_DECREE
               </span>
             </div>
-            <h2 className="text-base md:text-lg font-bold font-display text-[#ECEFF4] tracking-tight mt-0.5">
+            <h2 className="text-base md:text-lg font-bold font-mono text-[#ECEFF4] tracking-tight mt-0.5">
               The Council Ruling
             </h2>
           </div>
         </div>
 
         <div className="text-[10px] text-[#525A66]">
-          <span>ID: #{verdict.id.slice(-6).toUpperCase()}</span>
+          <span>[ID: #{verdict.id.slice(-6).toUpperCase()}]</span>
         </div>
       </div>
 
       {/* Primary Recommendation Banner in Warm Orange */}
-      <div className="mb-5 p-4 rounded-sm border border-[#FF6E26] bg-[#FF6E26]/10 relative">
-        <div className="flex items-center justify-between text-[10px] text-[#FF6E26] mb-1 font-semibold">
-          <span>RECOMMENDATION</span>
-          <span className="bg-[#FF6E26] text-[#0A0A0C] px-1.5 py-0.2 rounded-xs font-bold text-[8px]">
-            BINDING
+      <div className="mb-5 p-4 border border-[#FF6E26] bg-[#FF6E26]/10 relative">
+        <div className="flex items-center justify-between text-[10px] text-[#FF6E26] mb-1 font-semibold font-mono">
+          <span>// RECOMMENDATION</span>
+          <span className="bg-[#FF6E26] text-[#0A0A0C] px-1.5 py-0.2 font-bold text-[8px]">
+            [BINDING]
           </span>
         </div>
-        <p className="text-sm md:text-base font-semibold text-[#ECEFF4] leading-snug">
+        <p className="text-sm md:text-base font-semibold text-[#ECEFF4] leading-snug font-mono">
           "{verdict.recommendation}"
         </p>
       </div>
 
       {/* Synthesis Summary */}
-      <div className="mb-5 p-4 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
-        <h3 className="text-[10px] text-[#8B949E] uppercase tracking-wider mb-1.5 font-semibold">
-          // Judicial Synthesis
+      <div className="mb-5 p-4 border border-[#1E2228] bg-[#0A0A0C]">
+        <h3 className="text-[10px] text-[#8B949E] uppercase tracking-wider mb-1.5 font-semibold font-mono">
+          // JUDICIAL_SYNTHESIS
         </h3>
-        <p className="text-xs text-[#ECEFF4] leading-relaxed whitespace-pre-wrap">
+        <p className="text-xs text-[#ECEFF4] leading-relaxed whitespace-pre-wrap font-mono">
           {verdict.summary}
         </p>
       </div>
@@ -75,7 +75,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
       {/* Key Considerations Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
         {/* Supporting Points */}
-        <div className="p-3.5 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
+        <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <CheckCircle2 className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
@@ -88,7 +88,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         </div>
 
         {/* Counterpoints */}
-        <div className="p-3.5 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
+        <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <AlertTriangle className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
@@ -101,7 +101,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         </div>
 
         {/* Risks */}
-        <div className="p-3.5 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
+        <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <ShieldAlert className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
@@ -114,7 +114,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
         </div>
 
         {/* Unresolved Tensions */}
-        <div className="p-3.5 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
+        <div className="p-3.5 border border-[#1E2228] bg-[#0A0A0C]">
           <div className="flex items-center gap-1.5 mb-2 text-[#ECEFF4]">
             <HelpCircle className="h-3.5 w-3.5 text-[#FF6E26]" />
             <h4 className="text-[10px] font-semibold tracking-wider uppercase">
@@ -128,7 +128,7 @@ export function VerdictPanel({ verdict }: VerdictPanelProps) {
       </div>
 
       {/* Action Plan Checklist */}
-      <div className="p-4 rounded-sm border border-dashed border-[#1E2228] bg-[#0A0A0C]">
+      <div className="p-4 border border-[#1E2228] bg-[#0A0A0C]">
         <div className="flex items-center gap-1.5 text-[#FF6E26] mb-2 font-semibold">
           <CheckSquare className="h-3.5 w-3.5" />
           <h4 className="text-[10px] tracking-wider uppercase">

@@ -13,17 +13,17 @@ interface RecentDebatesProps {
 export function RecentDebates({ debates }: RecentDebatesProps) {
   if (debates.length === 0) {
     return (
-      <div className="p-8 rounded-md border border-dashed border-[#1E2228] bg-[#0E1013] text-center select-none font-mono-code">
+      <div className="p-8 border border-[#1E2228] bg-[#0E1013] text-center select-none font-mono-code">
         <Scale className="h-8 w-8 text-[#525A66] mx-auto mb-3" />
         <p className="text-xs text-[#ECEFF4] font-semibold mb-1">
-          No Debates on Record
+          // NO_DEBATES_ON_RECORD
         </p>
         <p className="text-[11px] text-[#8B949E] mb-4">
           Drop your first dilemma to convene the digital council.
         </p>
         <Link href="/debates/new">
-          <button className="btn-terminal-accent px-4 py-2 text-xs rounded-sm cursor-pointer font-semibold">
-            Start First Debate
+          <button className="btn-terminal-accent px-4 py-2 text-xs border border-[#FF853E] cursor-pointer font-bold">
+            [ START_FIRST_DEBATE ⚔ ]
           </button>
         </Link>
       </div>
@@ -32,16 +32,16 @@ export function RecentDebates({ debates }: RecentDebatesProps) {
 
   return (
     <div className="select-none font-mono-code">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 border-b border-[#1E2228] pb-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-[#ECEFF4]">Recent Debates</span>
-          <span className="text-[10px] text-[#525A66]">// LOGS</span>
+          <span className="text-xs font-semibold text-[#ECEFF4]">// RECENT_DEBATES</span>
+          <span className="text-[10px] text-[#525A66]">[{debates.length.toString().padStart(2, "0")}]</span>
         </div>
         <Link
           href="/debates"
-          className="text-xs text-[#8B949E] hover:text-[#FF6E26] transition-colors flex items-center gap-1"
+          className="text-xs text-[#8B949E] hover:text-[#FF6E26] transition-colors flex items-center gap-1 font-mono"
         >
-          <span>View all</span>
+          <span>[VIEW_ALL]</span>
           <span>→</span>
         </Link>
       </div>
@@ -60,22 +60,22 @@ export function RecentDebates({ debates }: RecentDebatesProps) {
             >
               <Link
                 href={`/debates/${debate.id}`}
-                className="group flex items-center justify-between p-3.5 rounded-md border border-dashed border-[#1E2228] bg-[#0E1013] hover:border-[#FF6E26]/50 hover:bg-[#12151A] transition-all"
+                className="group flex items-center justify-between p-3 border border-[#1E2228] bg-[#0E1013] hover:border-[#FF6E26] hover:bg-[#12151A] transition-all"
               >
                 <div className="flex items-center gap-3.5 min-w-0 pr-4">
                   {/* Status Indicator */}
                   <div className="flex-shrink-0">
                     {isCompleted ? (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full border border-dashed border-[#1E2228] text-[#ECEFF4] bg-[#0A0A0C]">
-                        ✔ VERDICT
+                      <span className="text-[10px] px-2 py-0.5 border border-[#1E2228] text-[#ECEFF4] bg-[#0A0A0C] font-mono">
+                        [✔ VERDICT]
                       </span>
                     ) : isInProgress ? (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full border border-[#FF6E26] text-[#FF6E26] bg-[#FF6E26]/10 animate-pulse">
-                        ● LIVE
+                      <span className="text-[10px] px-2 py-0.5 border border-[#FF6E26] text-[#FF6E26] bg-[#FF6E26]/10 animate-pulse font-mono">
+                        [● LIVE]
                       </span>
                     ) : (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full text-[#8B949E] bg-[#14171C]">
-                        QUEUED
+                      <span className="text-[10px] px-2 py-0.5 border border-[#2A303A] text-[#8B949E] bg-[#14171C] font-mono">
+                        [QUEUED]
                       </span>
                     )}
                   </div>
